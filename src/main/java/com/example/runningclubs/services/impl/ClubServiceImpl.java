@@ -23,6 +23,11 @@ public class ClubServiceImpl implements ClubService {
         return clubs.stream().map((club) -> mapToClubDTO(club)).collect(Collectors.toList());
     }
 
+    @Override
+    public Club saveClub(Club club) {
+        return clubRepository.save(club);
+    }
+
     private ClubDTO mapToClubDTO(Club club) {
         ClubDTO clubDTO = ClubDTO.builder()
                 .id(club.getId())
