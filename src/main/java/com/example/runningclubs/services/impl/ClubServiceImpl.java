@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.runningclubs.mapper.ClubMapper.mapToClub;
+import static com.example.runningclubs.mapper.ClubMapper.mapToClubDTO;
+
 @Service
 public class ClubServiceImpl implements ClubService {
     private ClubRepository clubRepository;
@@ -36,32 +39,19 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
+    public void delete(Long clubId) {
+        clubRepository.deleteById(clubId);
+    }
+
+    @Override
+    public List<ClubDTO> searchClubs(String query) {
+        List<Club> clubs = clubRepository.searchClubs(query);
+        return clubs.stream().map(club -> mapToClubDTO(club)).collect(Collectors.toList());
+    }
+
+    @Override
     public Club saveClub(ClubDTO clubDTO) {
         Club club = mapToClub(clubDTO);
         return clubRepository.save(club);
-    }
-
-    private Club mapToClub(ClubDTO club) {
-        Club clubDTO = Club.builder()
-                .id(club.getId())
-                .title(club.getTitle())
-                .url(club.getUrl())
-                .content(club.getContent())
-                .createOn(club.getCreateOn())
-                .updateOn(club.getUpdateOn())
-                .build();
-        return clubDTO;
-    }
-
-    private ClubDTO mapToClubDTO(Club club) {
-        ClubDTO clubDTO = ClubDTO.builder()
-                .id(club.getId())
-                .title(club.getTitle())
-                .url(club.getUrl())
-                .content(club.getContent())
-                .createOn(club.getCreateOn())
-                .updateOn(club.getUpdateOn())
-                .build();
-        return clubDTO;
     }
 }
