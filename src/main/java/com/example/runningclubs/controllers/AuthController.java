@@ -19,6 +19,11 @@ public class AuthController {
         this.userService = userService;
     }
 
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
     @GetMapping("/register")
     public String getRegisterForm(Model model) {
         RegistrationDTO user = new RegistrationDTO();
@@ -29,6 +34,19 @@ public class AuthController {
     @PostMapping("/register/save")
     public String register(@Valid @ModelAttribute("user")RegistrationDTO user,
                            BindingResult result, Model model) {
-        UserEntity existingUsers = userService.findByEmail(user.getEmail());
+        UserEntity existingUsersEmail = userService.findByEmail(user.getEmail());
+        if (existingUsersEmail != null && existingUsersEmail.getEmail() != null && !existingUsersEmail.getEmail().isEmpty()) {
+            return "redirect:/register?fail";
+        }
+        UserEntity existingUserUsername = userService.findByUsername(user.getUsername());
+        if (existingUserUsername != null && existingUserUsername.getUsername() != null && !existingUserUsername.getUsername().isEmpty()) {
+            return "redirect:/register?fail";
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("user", user);
+            return "register";
+        }
+        userService.saveUser(user);
+        return "redirect:/clubs?success";
     }
 }
