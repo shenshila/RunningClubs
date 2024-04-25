@@ -2,8 +2,12 @@ package com.example.runningclubs.controllers;
 
 import com.example.runningclubs.DTO.ClubDTO;
 import com.example.runningclubs.models.Club;
+import com.example.runningclubs.models.UserEntity;
+import com.example.runningclubs.security.SecurityUtil;
 import com.example.runningclubs.services.ClubService;
+import com.example.runningclubs.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,14 +18,23 @@ import java.util.List;
 @Controller
 public class ClubController {
     private ClubService clubService;
+    private UserService userService;
 
-    public ClubController(ClubService clubService) {
+    public ClubController(ClubService clubService, UserService userService) {
         this.clubService = clubService;
+        this.userService = userService;
     }
 
     @GetMapping("/clubs")
     public String listClubs(Model model) {
+//        UserEntity user = new UserEntity();
         List<ClubDTO> clubs = clubService.findAllClubs();
+//        String username = SecurityUtil.getSessionUser();
+//        if (username != null) {
+//            user = userService.findByUsername(username);
+//            model.addAttribute("user", user);
+//        }
+//        model.addAttribute("user", user);
         model.addAttribute("clubs", clubs);
         return "clubs-list";
     }
